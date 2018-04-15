@@ -166,7 +166,7 @@
 <pre><code>[ephemeral_storage_encryption]
 enabled=True
 key_size=256
-</code></pre><p>重启nova相关的服务即可。</p>
+</code></pre><p><strong>需要配置<code>key_size</code>为支持的值，因为barbican默认使用simple crypto插件生成密钥，而simple crypto支持的密钥长度有限。</strong><br>重启nova相关的服务即可。</p>
 
       
 
@@ -180,7 +180,11 @@ key_size=256
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">OpenStack, Barbican</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">OpenStack</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Barbican</a>
         		</li>
       		
 		</ul>
@@ -350,7 +354,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">OpenStack, Barbican</a>
+                <a href="javascript:void(0)" class="js-tag color5">OpenStack</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Barbican</a>
               </li>
             
             <div class="clearfix"></div>
