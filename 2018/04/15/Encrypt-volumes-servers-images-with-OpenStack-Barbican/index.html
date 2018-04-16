@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="http://yoursite.com">
   <title>Encrypt volumes/servers/images with OpenStack Barbican | Jeremy_Liu&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="使用Barbican加密卷/虚拟机/镜像环境使用devstack部署的OpenStack单节点 Nova ephemeral storage encryptionnova的配置文件中配置开启临时存储加密： [ephemeral_storage_encryption] enabled=True key_size=256 需要配置key_size为支持的值，因为barbican默认使用simple c">
+  <meta name="description" content="使用Barbican加密卷/虚拟机/镜像环境使用devstack部署的OpenStack单节点 1、Nova ephemeral storage encryptionnova的配置文件中配置开启临时存储加密： [ephemeral_storage_encryption] enabled=True key_size=256 需要配置key_size为支持的值，因为barbican默认使用simple">
 <meta name="keywords" content="OpenStack,Barbican">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Encrypt volumes&#x2F;servers&#x2F;images with OpenStack Barbican">
 <meta property="og:url" content="http://yoursite.com/2018/04/15/Encrypt-volumes-servers-images-with-OpenStack-Barbican/index.html">
 <meta property="og:site_name" content="Jeremy_Liu&#39;s Blog">
-<meta property="og:description" content="使用Barbican加密卷/虚拟机/镜像环境使用devstack部署的OpenStack单节点 Nova ephemeral storage encryptionnova的配置文件中配置开启临时存储加密： [ephemeral_storage_encryption] enabled=True key_size=256 需要配置key_size为支持的值，因为barbican默认使用simple c">
+<meta property="og:description" content="使用Barbican加密卷/虚拟机/镜像环境使用devstack部署的OpenStack单节点 1、Nova ephemeral storage encryptionnova的配置文件中配置开启临时存储加密： [ephemeral_storage_encryption] enabled=True key_size=256 需要配置key_size为支持的值，因为barbican默认使用simple">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-04-16T14:25:52.689Z">
+<meta property="og:updated_time" content="2018-04-16T14:28:14.121Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Encrypt volumes&#x2F;servers&#x2F;images with OpenStack Barbican">
-<meta name="twitter:description" content="使用Barbican加密卷/虚拟机/镜像环境使用devstack部署的OpenStack单节点 Nova ephemeral storage encryptionnova的配置文件中配置开启临时存储加密： [ephemeral_storage_encryption] enabled=True key_size=256 需要配置key_size为支持的值，因为barbican默认使用simple c">
+<meta name="twitter:description" content="使用Barbican加密卷/虚拟机/镜像环境使用devstack部署的OpenStack单节点 1、Nova ephemeral storage encryptionnova的配置文件中配置开启临时存储加密： [ephemeral_storage_encryption] enabled=True key_size=256 需要配置key_size为支持的值，因为barbican默认使用simple">
   
     <link rel="alternative" href="/atom.xml" title="Jeremy_Liu&#39;s Blog" type="application/atom+xml">
   
@@ -162,12 +162,12 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h1 id="使用Barbican加密卷-虚拟机-镜像"><a href="#使用Barbican加密卷-虚拟机-镜像" class="headerlink" title="使用Barbican加密卷/虚拟机/镜像"></a>使用Barbican加密卷/虚拟机/镜像</h1><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><p>使用devstack部署的OpenStack单节点</p>
-<h2 id="Nova-ephemeral-storage-encryption"><a href="#Nova-ephemeral-storage-encryption" class="headerlink" title="Nova ephemeral storage encryption"></a>Nova ephemeral storage encryption</h2><p>nova的配置文件中配置开启临时存储加密：</p>
+<h2 id="1、Nova-ephemeral-storage-encryption"><a href="#1、Nova-ephemeral-storage-encryption" class="headerlink" title="1、Nova ephemeral storage encryption"></a>1、Nova ephemeral storage encryption</h2><p>nova的配置文件中配置开启临时存储加密：</p>
 <pre><code>[ephemeral_storage_encryption]
 enabled=True
 key_size=256
 </code></pre><p><strong>需要配置<code>key_size</code>为支持的值，因为barbican默认使用simple crypto插件生成密钥，而simple crypto支持的密钥长度有限。</strong><br>重启nova相关的服务即可。</p>
-<h2 id="卷加密"><a href="#卷加密" class="headerlink" title="卷加密"></a>卷加密</h2><p>编辑<code>/etc/cinder/cinder.conf</code>，配置cinder服务的密钥管理后端为barbican：</p>
+<h2 id="2、卷加密"><a href="#2、卷加密" class="headerlink" title="2、卷加密"></a>2、卷加密</h2><p>编辑<code>/etc/cinder/cinder.conf</code>，配置cinder服务的密钥管理后端为barbican：</p>
 <pre><code>[key_manager]
 #fixed_key = bae3516cc1c0eb18b05440eba8012a4a880a2ee04d584a9c1579445e675b12defdc716ec
 backend = barbican

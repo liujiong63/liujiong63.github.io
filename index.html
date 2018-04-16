@@ -162,12 +162,12 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h1 id="使用Barbican加密卷-虚拟机-镜像"><a href="#使用Barbican加密卷-虚拟机-镜像" class="headerlink" title="使用Barbican加密卷/虚拟机/镜像"></a>使用Barbican加密卷/虚拟机/镜像</h1><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><p>使用devstack部署的OpenStack单节点</p>
-<h2 id="Nova-ephemeral-storage-encryption"><a href="#Nova-ephemeral-storage-encryption" class="headerlink" title="Nova ephemeral storage encryption"></a>Nova ephemeral storage encryption</h2><p>nova的配置文件中配置开启临时存储加密：</p>
+<h2 id="1、Nova-ephemeral-storage-encryption"><a href="#1、Nova-ephemeral-storage-encryption" class="headerlink" title="1、Nova ephemeral storage encryption"></a>1、Nova ephemeral storage encryption</h2><p>nova的配置文件中配置开启临时存储加密：</p>
 <pre><code>[ephemeral_storage_encryption]
 enabled=True
 key_size=256
 </code></pre><p><strong>需要配置<code>key_size</code>为支持的值，因为barbican默认使用simple crypto插件生成密钥，而simple crypto支持的密钥长度有限。</strong><br>重启nova相关的服务即可。</p>
-<h2 id="卷加密"><a href="#卷加密" class="headerlink" title="卷加密"></a>卷加密</h2><p>编辑<code>/etc/cinder/cinder.conf</code>，配置cinder服务的密钥管理后端为barbican：</p>
+<h2 id="2、卷加密"><a href="#2、卷加密" class="headerlink" title="2、卷加密"></a>2、卷加密</h2><p>编辑<code>/etc/cinder/cinder.conf</code>，配置cinder服务的密钥管理后端为barbican：</p>
 <pre><code>[key_manager]
 #fixed_key = bae3516cc1c0eb18b05440eba8012a4a880a2ee04d584a9c1579445e675b12defdc716ec
 backend = barbican
