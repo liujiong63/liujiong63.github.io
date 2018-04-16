@@ -167,7 +167,24 @@
 enabled=True
 key_size=256
 </code></pre><p><strong>需要配置<code>key_size</code>为支持的值，因为barbican默认使用simple crypto插件生成密钥，而simple crypto支持的密钥长度有限。</strong><br>重启nova相关的服务即可。</p>
-<p>未完待续…</p>
+<h2 id="卷加密"><a href="#卷加密" class="headerlink" title="卷加密"></a>卷加密</h2><p>编辑<code>/etc/cinder/cinder.conf</code>，配置cinder服务的密钥管理后端为barbican：</p>
+<pre><code>[key_manager]
+#fixed_key = bae3516cc1c0eb18b05440eba8012a4a880a2ee04d584a9c1579445e675b12defdc716ec
+backend = barbican
+</code></pre><p>编辑<code>/etc/nova/nova.conf</code>，配置nova服务的密钥管理后端为barbican：</p>
+<pre><code>[key_manager]
+#fixed_key = bae3516cc1c0eb18b05440eba8012a4a880a2ee04d584a9c1579445e675b12defdc716ec
+backend = barbican
+</code></pre><p>重启cinder、nova相关的服务。</p>
+<p>创建加密卷类型：</p>
+<pre><code>openstack volume type create --encryption-provider luks --encryption-cipher aes-xts-plain64 --encryption-key-size 256 --encryption-control-location front-end LUKS
+</code></pre><p>创建加密卷：</p>
+<pre><code>openstack volume create --size 1 --type LUKS &apos;encrypted volume&apos;
+</code></pre><p>创建虚拟机：</p>
+<pre><code>openstack server create --image cirros-0.3.5-x86_64-disk --flavor m1.tiny TESTVM
+</code></pre><p>将卷挂载到虚拟机：</p>
+<pre><code>openstack server add volume --device /dev/vdb TESTVM &apos;encrypted volume&apos;
+</code></pre><p>未完待续…</p>
 
       
 
