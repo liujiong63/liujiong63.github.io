@@ -8,18 +8,18 @@
   <link rel="dns-prefetch" href="http://yoursite.com">
   <title>Encrypt volumes/servers/images with OpenStack Barbican | Jeremy_Liu&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="使用Barbican加密卷/虚拟机/镜像环境使用devstack部署的OpenStack单节点 1、Nova ephemeral storage encryptionnova的配置文件中配置开启临时存储加密： [ephemeral_storage_encryption] enabled=True key_size=256 需要配置key_size为支持的值，因为barbican默认使用simple">
+  <meta name="description" content="更新历史：  2018.04.15，初稿完成 2018.05.01，添加加密卷的验证部分，添加镜像验签部分  使用Barbican加密卷/虚拟机/镜像环境使用devstack部署的OpenStack单节点 1、Nova ephemeral storage encryptionnova的配置文件中配置开启临时存储加密： [ephemeral_storage_encryption] enabled=T">
 <meta name="keywords" content="OpenStack,Barbican">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Encrypt volumes&#x2F;servers&#x2F;images with OpenStack Barbican">
 <meta property="og:url" content="http://yoursite.com/2018/04/15/Encrypt-volumes-servers-images-with-OpenStack-Barbican/index.html">
 <meta property="og:site_name" content="Jeremy_Liu&#39;s Blog">
-<meta property="og:description" content="使用Barbican加密卷/虚拟机/镜像环境使用devstack部署的OpenStack单节点 1、Nova ephemeral storage encryptionnova的配置文件中配置开启临时存储加密： [ephemeral_storage_encryption] enabled=True key_size=256 需要配置key_size为支持的值，因为barbican默认使用simple">
+<meta property="og:description" content="更新历史：  2018.04.15，初稿完成 2018.05.01，添加加密卷的验证部分，添加镜像验签部分  使用Barbican加密卷/虚拟机/镜像环境使用devstack部署的OpenStack单节点 1、Nova ephemeral storage encryptionnova的配置文件中配置开启临时存储加密： [ephemeral_storage_encryption] enabled=T">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-05-01T13:44:35.227Z">
+<meta property="og:updated_time" content="2018-05-01T14:00:29.955Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Encrypt volumes&#x2F;servers&#x2F;images with OpenStack Barbican">
-<meta name="twitter:description" content="使用Barbican加密卷/虚拟机/镜像环境使用devstack部署的OpenStack单节点 1、Nova ephemeral storage encryptionnova的配置文件中配置开启临时存储加密： [ephemeral_storage_encryption] enabled=True key_size=256 需要配置key_size为支持的值，因为barbican默认使用simple">
+<meta name="twitter:description" content="更新历史：  2018.04.15，初稿完成 2018.05.01，添加加密卷的验证部分，添加镜像验签部分  使用Barbican加密卷/虚拟机/镜像环境使用devstack部署的OpenStack单节点 1、Nova ephemeral storage encryptionnova的配置文件中配置开启临时存储加密： [ephemeral_storage_encryption] enabled=T">
   
     <link rel="alternative" href="/atom.xml" title="Jeremy_Liu&#39;s Blog" type="application/atom+xml">
   
@@ -161,7 +161,12 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="使用Barbican加密卷-虚拟机-镜像"><a href="#使用Barbican加密卷-虚拟机-镜像" class="headerlink" title="使用Barbican加密卷/虚拟机/镜像"></a>使用Barbican加密卷/虚拟机/镜像</h1><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><p>使用devstack部署的OpenStack单节点</p>
+        <p>更新历史：</p>
+<ul>
+<li>2018.04.15，初稿完成</li>
+<li>2018.05.01，添加加密卷的验证部分，添加镜像验签部分</li>
+</ul>
+<h1 id="使用Barbican加密卷-虚拟机-镜像"><a href="#使用Barbican加密卷-虚拟机-镜像" class="headerlink" title="使用Barbican加密卷/虚拟机/镜像"></a>使用Barbican加密卷/虚拟机/镜像</h1><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><p>使用devstack部署的OpenStack单节点</p>
 <h2 id="1、Nova-ephemeral-storage-encryption"><a href="#1、Nova-ephemeral-storage-encryption" class="headerlink" title="1、Nova ephemeral storage encryption"></a>1、Nova ephemeral storage encryption</h2><p>nova的配置文件中配置开启临时存储加密：</p>
 <pre><code>[ephemeral_storage_encryption]
 enabled=True
@@ -180,11 +185,22 @@ backend = barbican
 <pre><code>openstack volume type create --encryption-provider luks --encryption-cipher aes-xts-plain64 --encryption-key-size 256 --encryption-control-location front-end LUKS
 </code></pre><p>创建加密卷：</p>
 <pre><code>openstack volume create --size 1 --type LUKS &apos;encrypted volume&apos;
+</code></pre><p>创建非加密卷：</p>
+<pre><code>openstack volume create --size 1 &apos;unencrypted volume&apos;
 </code></pre><p>创建虚拟机：</p>
 <pre><code>openstack server create --image cirros-0.3.5-x86_64-disk --flavor m1.tiny TESTVM
 </code></pre><p>将卷挂载到虚拟机：</p>
 <pre><code>openstack server add volume --device /dev/vdb TESTVM &apos;encrypted volume&apos;
-</code></pre><h2 id="3、镜像签名-验签"><a href="#3、镜像签名-验签" class="headerlink" title="3、镜像签名/验签"></a>3、镜像签名/验签</h2><p>修改glance配置文件<code>/etc/glance/glance-api.conf</code>，添加如下配置：</p>
+openstack server add volume --device /dev/vdc TESTVM &apos;unencrypted volume&apos;
+</code></pre><p>在虚拟机中向卷写数据：</p>
+<pre><code>echo &quot;encrypted&quot; &gt;&gt; /dev/vdb
+echo &quot;unencrypted&quot; &gt;&gt; /dev/vdc
+sync &amp;&amp; sleep 2
+</code></pre><p>在cinder-volume服务所在主机上搜索卷中数据：</p>
+<pre><code>strings /dev/stack-volumes-lvmdriver-1/volume-* | grep &quot;encrypt&quot;
+unencrypted
+</code></pre><p>只能读到非加密卷中的数据。</p>
+<h2 id="3、镜像签名-验签"><a href="#3、镜像签名-验签" class="headerlink" title="3、镜像签名/验签"></a>3、镜像签名/验签</h2><p>修改glance配置文件<code>/etc/glance/glance-api.conf</code>，添加如下配置：</p>
 <pre><code>[barbican]
 auth_endpoint = http://localhost/identity/v3
 
