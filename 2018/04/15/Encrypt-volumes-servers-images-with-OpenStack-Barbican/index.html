@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Jeremy_Liu&#39;s Blog">
 <meta property="og:description" content="使用Barbican加密卷/虚拟机/镜像环境使用devstack部署的OpenStack单节点 1、Nova ephemeral storage encryptionnova的配置文件中配置开启临时存储加密： [ephemeral_storage_encryption] enabled=True key_size=256 需要配置key_size为支持的值，因为barbican默认使用simple">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-05-01T13:40:39.073Z">
+<meta property="og:updated_time" content="2018-05-01T13:44:35.227Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Encrypt volumes&#x2F;servers&#x2F;images with OpenStack Barbican">
 <meta name="twitter:description" content="使用Barbican加密卷/虚拟机/镜像环境使用devstack部署的OpenStack单节点 1、Nova ephemeral storage encryptionnova的配置文件中配置开启临时存储加密： [ephemeral_storage_encryption] enabled=True key_size=256 需要配置key_size为支持的值，因为barbican默认使用simple">
@@ -211,7 +211,6 @@ image_signature=$(cat cirrosimage.signature.b64)
 </code></pre><p>上传镜像。</p>
 <pre><code>glance image-create --name cirrosSignedImage --container-format bare --disk-format qcow2 --property img_signature=&quot;$image_signature&quot; --property img_signature_certificate_uuid=&quot;$cert_uuid&quot; --property img_signature_hash_method=&apos;SHA-256&apos; --property img_signature_key_type=&apos;RSA-PSS&apos; &lt; cirros-0.3.5-x86_64-disk.img
 </code></pre><p>如果镜像签名验证失败，镜像则创建失败。</p>
-<p>未完待续…</p>
 
       
 
