@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="Jeremy_Liu&#39;s Blog">
 <meta property="og:description" content="使用Barbican加密卷/虚拟机/镜像环境使用devstack部署的OpenStack单节点 1、Nova ephemeral storage encryptionnova的配置文件中配置开启临时存储加密： [ephemeral_storage_encryption] enabled=True key_size=256 需要配置key_size为支持的值，因为barbican默认使用simple">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-04-16T14:28:14.121Z">
+<meta property="og:updated_time" content="2018-05-01T13:40:39.073Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Encrypt volumes&#x2F;servers&#x2F;images with OpenStack Barbican">
 <meta name="twitter:description" content="使用Barbican加密卷/虚拟机/镜像环境使用devstack部署的OpenStack单节点 1、Nova ephemeral storage encryptionnova的配置文件中配置开启临时存储加密： [ephemeral_storage_encryption] enabled=True key_size=256 需要配置key_size为支持的值，因为barbican默认使用simple">
@@ -184,7 +184,34 @@ backend = barbican
 <pre><code>openstack server create --image cirros-0.3.5-x86_64-disk --flavor m1.tiny TESTVM
 </code></pre><p>将卷挂载到虚拟机：</p>
 <pre><code>openstack server add volume --device /dev/vdb TESTVM &apos;encrypted volume&apos;
-</code></pre><p>未完待续…</p>
+</code></pre><h2 id="3、镜像签名-验签"><a href="#3、镜像签名-验签" class="headerlink" title="3、镜像签名/验签"></a>3、镜像签名/验签</h2><p>修改glance配置文件<code>/etc/glance/glance-api.conf</code>，添加如下配置：</p>
+<pre><code>[barbican]
+auth_endpoint = http://localhost/identity/v3
+
+[key_manager]
+backend = barbican
+</code></pre><p>重启glance相关服务。</p>
+<p>准备密钥、证书，使用openssl生成。</p>
+<pre><code>openssl genrsa -out private_key.pem 1024
+openssl rsa -pubout -in private_key.pem -out public_key.pem
+openssl req -new -key private_key.pem -out cert_request.csr
+openssl x509 -req -days 14 -in cert_request.csr -signkey private_key.pem -out new_cert.crt
+</code></pre><p>上传证书到barbican。</p>
+<pre><code>openstack secret store --name test --algorithm RSA --expiration 2018-06-29 --secret-type certificate --payload-content-type &quot;application/octet-stream&quot; --payload-content-encoding base64 --payload &quot;$(base64 new_cert.crt)&quot;
++---------------+-------------------------------------------------------------------------------+
+| Field         | Value                                                                         |
++---------------+-------------------------------------------------------------------------------+
+| Secret href   | http://localhost/key-manager/v1/secrets/a9e46728-2ac6-4adf-a2ff-35250607ab14 |
+
+cert_uuid=a9e46728-2ac6-4adf-a2ff-35250607ab14
+</code></pre><p>为镜像生成签名。</p>
+<pre><code>openssl dgst -sha256 -sign private_key.pem -sigopt rsa_padding_mode:pss -out cirrosimage.signature cirros-0.3.5-x86_64-disk.img
+base64 -w 0 cirrosimage.signature &gt; cirrosimage.signature.b64
+image_signature=$(cat cirrosimage.signature.b64)
+</code></pre><p>上传镜像。</p>
+<pre><code>glance image-create --name cirrosSignedImage --container-format bare --disk-format qcow2 --property img_signature=&quot;$image_signature&quot; --property img_signature_certificate_uuid=&quot;$cert_uuid&quot; --property img_signature_hash_method=&apos;SHA-256&apos; --property img_signature_key_type=&apos;RSA-PSS&apos; &lt; cirros-0.3.5-x86_64-disk.img
+</code></pre><p>如果镜像签名验证失败，镜像则创建失败。</p>
+<p>未完待续…</p>
 
       
 
