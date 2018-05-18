@@ -141,6 +141,116 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-OpenStack-Keystone对于多因子认证的支持" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/18/OpenStack-Keystone对于多因子认证的支持/">OpenStack Keystone对于多因子认证的支持</a>
+    </h1>
+  
+
+        
+        <a href="/2018/05/18/OpenStack-Keystone对于多因子认证的支持/" class="archive-article-date">
+  	<time datetime="2018-05-18T01:41:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-05-18</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>说明：</p>
+<ul>
+<li>基于Keystone Queens版本</li>
+</ul>
+<h1 id="支持情况"><a href="#支持情况" class="headerlink" title="支持情况"></a>支持情况</h1><p>OpenStack Keystone在v3版本的API中支持了多因子认证特性，当前已经实现的认证插件有：</p>
+<ul>
+<li>external</li>
+<li>password</li>
+<li>token</li>
+<li>oauth1</li>
+<li>mapped</li>
+<li>application_credential</li>
+<li>totp</li>
+</ul>
+<p>其中totp插件默认没有开启。</p>
+<h1 id="如何使用多因子认证功能？"><a href="#如何使用多因子认证功能？" class="headerlink" title="如何使用多因子认证功能？"></a>如何使用多因子认证功能？</h1><p>对于Keystone默认启用了的认证插件，只需要在调用Keystone的认证接口中传入指定格式的数据，服务端会自动解析并进行认证。<br>通常，数据格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;auth&quot;: &#123;</span><br><span class="line">        &quot;identity&quot;: &#123;</span><br><span class="line">            &quot;custom-plugin&quot;: &#123;</span><br><span class="line">                &quot;custom-data&quot;: &quot;sdfdfsfsfsdfsf&quot;</span><br><span class="line">            &#125;,</span><br><span class="line">            &quot;methods&quot;: [</span><br><span class="line">                &quot;custom-plugin&quot;,</span><br><span class="line">                &quot;password&quot;,</span><br><span class="line">                &quot;token&quot;</span><br><span class="line">            ],</span><br><span class="line">            &quot;password&quot;: &#123;</span><br><span class="line">                &quot;user&quot;: &#123;</span><br><span class="line">                    &quot;id&quot;: &quot;s23sfad1&quot;,</span><br><span class="line">                    &quot;password&quot;: &quot;secret&quot;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            &quot;token&quot;: &#123;</span><br><span class="line">                &quot;id&quot;: &quot;sdfafasdfsfasfasdfds&quot;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>identity</code>是所有认证相关的数据，<code>methods</code>中指定了认证插件有哪些，各认证插件有自己的认证数据/格式。Keystone服务解析数据并依次认证，必须所有插件都认证成功才为用户颁发token。</p>
+<h1 id="如何添加新的认证插件？"><a href="#如何添加新的认证插件？" class="headerlink" title="如何添加新的认证插件？"></a>如何添加新的认证插件？</h1><p>Keystone认证插件的扩展性很好，所有认证插件必须继承自<code>class keystone.auth.plugins.base.AuthMethodHandler</code>并实现各自的<code>authenticate</code>方法。新的插件名称要添加到keystone配置文件的<code>auth</code>组下的<code>methods</code>配置项中，以便Keystone服务在启动时加载该插件。</p>
+<p><code>authenticate</code>方法有如下参数：</p>
+<ul>
+<li>context - keystone’s request context</li>
+<li>auth_payload - the content of the authentication for a given method</li>
+<li>auth_context - user authentication context, a dictionary shared by all plugins. It contains method_names and extras by default</li>
+</ul>
+<p>认证成功后，<code>auth_context</code>中要提供有效的<code>user_id</code>参数，认证失败，必须抛出<code>keystone.exception.Unauthorized</code>的异常。</p>
+<h1 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h1><ul>
+<li><a href="https://docs.openstack.org/keystone/latest/contributor/auth-plugins.html" target="_blank" rel="noopener">https://docs.openstack.org/keystone/latest/contributor/auth-plugins.html</a></li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">OpenStack</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Keystone</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Multi-Factor Authentication</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/05/18/OpenStack-Keystone对于多因子认证的支持/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Python-Queue简单使用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -458,6 +568,14 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Barbican</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Keystone</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Multi-Factor Authentication</a>
               </li>
              
               <li class="article-tag-list-item">
