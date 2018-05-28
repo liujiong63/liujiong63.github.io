@@ -141,6 +141,116 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-OpenStack-Keystone对于多因子认证的支持" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/18/OpenStack-Keystone对于多因子认证的支持/">OpenStack Keystone对于多因子认证的支持</a>
+    </h1>
+  
+
+        
+        <a href="/2018/05/18/OpenStack-Keystone对于多因子认证的支持/" class="archive-article-date">
+  	<time datetime="2018-05-18T01:41:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-05-18</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>说明：</p>
+<ul>
+<li>基于Keystone Queens版本</li>
+</ul>
+<h1 id="支持情况"><a href="#支持情况" class="headerlink" title="支持情况"></a>支持情况</h1><p>OpenStack Keystone在v3版本的API中支持了多因子认证特性，当前已经实现的认证插件有：</p>
+<ul>
+<li>external</li>
+<li>password</li>
+<li>token</li>
+<li>oauth1</li>
+<li>mapped</li>
+<li>application_credential</li>
+<li>totp</li>
+</ul>
+<p>其中totp插件默认没有开启。</p>
+<h1 id="如何使用多因子认证功能？"><a href="#如何使用多因子认证功能？" class="headerlink" title="如何使用多因子认证功能？"></a>如何使用多因子认证功能？</h1><p>对于Keystone默认启用了的认证插件，只需要在调用Keystone的认证接口中传入指定格式的数据，服务端会自动解析并进行认证。<br>通常，数据格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;auth&quot;: &#123;</span><br><span class="line">        &quot;identity&quot;: &#123;</span><br><span class="line">            &quot;custom-plugin&quot;: &#123;</span><br><span class="line">                &quot;custom-data&quot;: &quot;sdfdfsfsfsdfsf&quot;</span><br><span class="line">            &#125;,</span><br><span class="line">            &quot;methods&quot;: [</span><br><span class="line">                &quot;custom-plugin&quot;,</span><br><span class="line">                &quot;password&quot;,</span><br><span class="line">                &quot;token&quot;</span><br><span class="line">            ],</span><br><span class="line">            &quot;password&quot;: &#123;</span><br><span class="line">                &quot;user&quot;: &#123;</span><br><span class="line">                    &quot;id&quot;: &quot;s23sfad1&quot;,</span><br><span class="line">                    &quot;password&quot;: &quot;secret&quot;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            &quot;token&quot;: &#123;</span><br><span class="line">                &quot;id&quot;: &quot;sdfafasdfsfasfasdfds&quot;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>identity</code>是所有认证相关的数据，<code>methods</code>中指定了认证插件有哪些，各认证插件有自己的认证数据/格式。Keystone服务解析数据并依次认证，必须所有插件都认证成功才为用户颁发token。</p>
+<h1 id="如何添加新的认证插件？"><a href="#如何添加新的认证插件？" class="headerlink" title="如何添加新的认证插件？"></a>如何添加新的认证插件？</h1><p>Keystone认证插件的扩展性很好，所有认证插件必须继承自<code>class keystone.auth.plugins.base.AuthMethodHandler</code>并实现各自的<code>authenticate</code>方法。新的插件名称要添加到keystone配置文件的<code>auth</code>组下的<code>methods</code>配置项中，以便Keystone服务在启动时加载该插件。</p>
+<p><code>authenticate</code>方法有如下参数：</p>
+<ul>
+<li>context - keystone’s request context</li>
+<li>auth_payload - the content of the authentication for a given method</li>
+<li>auth_context - user authentication context, a dictionary shared by all plugins. It contains method_names and extras by default</li>
+</ul>
+<p>认证成功后，<code>auth_context</code>中要提供有效的<code>user_id</code>参数，认证失败，必须抛出<code>keystone.exception.Unauthorized</code>的异常。</p>
+<h1 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h1><ul>
+<li><a href="https://docs.openstack.org/keystone/latest/contributor/auth-plugins.html" target="_blank" rel="noopener">https://docs.openstack.org/keystone/latest/contributor/auth-plugins.html</a></li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">OpenStack</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Keystone</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Multi-Factor Authentication</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/05/18/OpenStack-Keystone对于多因子认证的支持/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Python-Queue简单使用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -198,6 +308,149 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2018/04/28/Python-Queue简单使用/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-Encrypt-volumes-servers-images-with-OpenStack-Barbican" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/04/15/Encrypt-volumes-servers-images-with-OpenStack-Barbican/">Encrypt volumes/servers/images with OpenStack Barbican</a>
+    </h1>
+  
+
+        
+        <a href="/2018/04/15/Encrypt-volumes-servers-images-with-OpenStack-Barbican/" class="archive-article-date">
+  	<time datetime="2018-04-15T14:06:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-04-15</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>更新历史：</p>
+<ul>
+<li>2018.04.15，初稿完成</li>
+<li>2018.05.01，添加加密卷的验证部分，添加镜像验签部分</li>
+</ul>
+<h1 id="使用Barbican加密卷-虚拟机-镜像"><a href="#使用Barbican加密卷-虚拟机-镜像" class="headerlink" title="使用Barbican加密卷/虚拟机/镜像"></a>使用Barbican加密卷/虚拟机/镜像</h1><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><p>使用devstack部署的OpenStack单节点</p>
+<h2 id="1、Nova-ephemeral-storage-encryption"><a href="#1、Nova-ephemeral-storage-encryption" class="headerlink" title="1、Nova ephemeral storage encryption"></a>1、Nova ephemeral storage encryption</h2><p>nova的配置文件中配置开启临时存储加密：</p>
+<pre><code>[ephemeral_storage_encryption]
+enabled=True
+key_size=256
+</code></pre><p><strong>需要配置<code>key_size</code>为支持的值，因为barbican默认使用simple crypto插件生成密钥，而simple crypto支持的密钥长度有限。</strong><br>重启nova相关的服务即可。</p>
+<h2 id="2、卷加密"><a href="#2、卷加密" class="headerlink" title="2、卷加密"></a>2、卷加密</h2><p>编辑<code>/etc/cinder/cinder.conf</code>，配置cinder服务的密钥管理后端为barbican：</p>
+<pre><code>[key_manager]
+#fixed_key = bae3516cc1c0eb18b05440eba8012a4a880a2ee04d584a9c1579445e675b12defdc716ec
+backend = barbican
+</code></pre><p>编辑<code>/etc/nova/nova.conf</code>，配置nova服务的密钥管理后端为barbican：</p>
+<pre><code>[key_manager]
+#fixed_key = bae3516cc1c0eb18b05440eba8012a4a880a2ee04d584a9c1579445e675b12defdc716ec
+backend = barbican
+</code></pre><p>重启cinder、nova相关的服务。</p>
+<p>创建加密卷类型：</p>
+<pre><code>openstack volume type create --encryption-provider luks --encryption-cipher aes-xts-plain64 --encryption-key-size 256 --encryption-control-location front-end LUKS
+</code></pre><p>创建加密卷：</p>
+<pre><code>openstack volume create --size 1 --type LUKS &apos;encrypted volume&apos;
+</code></pre><p>创建非加密卷：</p>
+<pre><code>openstack volume create --size 1 &apos;unencrypted volume&apos;
+</code></pre><p>创建虚拟机：</p>
+<pre><code>openstack server create --image cirros-0.3.5-x86_64-disk --flavor m1.tiny TESTVM
+</code></pre><p>将卷挂载到虚拟机：</p>
+<pre><code>openstack server add volume --device /dev/vdb TESTVM &apos;encrypted volume&apos;
+openstack server add volume --device /dev/vdc TESTVM &apos;unencrypted volume&apos;
+</code></pre><p>在虚拟机中向卷写数据：</p>
+<pre><code>echo &quot;encrypted&quot; &gt;&gt; /dev/vdb
+echo &quot;unencrypted&quot; &gt;&gt; /dev/vdc
+sync &amp;&amp; sleep 2
+</code></pre><p>在cinder-volume服务所在主机上搜索卷中数据：</p>
+<pre><code>strings /dev/stack-volumes-lvmdriver-1/volume-* | grep &quot;encrypt&quot;
+unencrypted
+</code></pre><p>只能读到非加密卷中的数据。</p>
+<h2 id="3、镜像签名-验签"><a href="#3、镜像签名-验签" class="headerlink" title="3、镜像签名/验签"></a>3、镜像签名/验签</h2><p>修改glance配置文件<code>/etc/glance/glance-api.conf</code>，添加如下配置：</p>
+<pre><code>[barbican]
+auth_endpoint = http://localhost/identity/v3
+
+[key_manager]
+backend = barbican
+</code></pre><p>重启glance相关服务。</p>
+<p>准备密钥、证书，使用openssl生成。</p>
+<pre><code>openssl genrsa -out private_key.pem 1024
+openssl rsa -pubout -in private_key.pem -out public_key.pem
+openssl req -new -key private_key.pem -out cert_request.csr
+openssl x509 -req -days 14 -in cert_request.csr -signkey private_key.pem -out new_cert.crt
+</code></pre><p>上传证书到barbican。</p>
+<pre><code>openstack secret store --name test --algorithm RSA --expiration 2018-06-29 --secret-type certificate --payload-content-type &quot;application/octet-stream&quot; --payload-content-encoding base64 --payload &quot;$(base64 new_cert.crt)&quot;
++---------------+-------------------------------------------------------------------------------+
+| Field         | Value                                                                         |
++---------------+-------------------------------------------------------------------------------+
+| Secret href   | http://localhost/key-manager/v1/secrets/a9e46728-2ac6-4adf-a2ff-35250607ab14 |
+
+cert_uuid=a9e46728-2ac6-4adf-a2ff-35250607ab14
+</code></pre><p>为镜像生成签名。</p>
+<pre><code>openssl dgst -sha256 -sign private_key.pem -sigopt rsa_padding_mode:pss -out cirrosimage.signature cirros-0.3.5-x86_64-disk.img
+base64 -w 0 cirrosimage.signature &gt; cirrosimage.signature.b64
+image_signature=$(cat cirrosimage.signature.b64)
+</code></pre><p>上传镜像。</p>
+<pre><code>glance image-create --name cirrosSignedImage --container-format bare --disk-format qcow2 --property img_signature=&quot;$image_signature&quot; --property img_signature_certificate_uuid=&quot;$cert_uuid&quot; --property img_signature_hash_method=&apos;SHA-256&apos; --property img_signature_key_type=&apos;RSA-PSS&apos; &lt; cirros-0.3.5-x86_64-disk.img
+</code></pre><p>如果镜像签名验证失败，镜像则创建失败。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">OpenStack</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Barbican</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2018/04/15/Encrypt-volumes-servers-images-with-OpenStack-Barbican/">展开全文 >></a>
         </p>
       
 
@@ -300,6 +553,22 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
             <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
           </label>
           <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">OpenStack</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Barbican</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Keystone</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Multi-Factor Authentication</a>
+              </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Python</a>
