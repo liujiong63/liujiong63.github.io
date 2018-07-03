@@ -170,7 +170,7 @@
 <p>由镜像启动的虚拟机做快照时，只对系统盘进行快照，不对数据盘进行快照，快照过程<br>中要挂起虚拟机，因此虚拟机中运行的业务可能会中断。快照完成后，将快照上传到<br>glance服务中，保存为snapshot类型的镜像，并恢复虚拟机状态。</p>
 <p>由卷启动的虚拟机做快照时，同时对系统盘和数据盘进行快照，快照实际执行由cinder<br>存储服务完成。因此可以利用存储后端的快照功能。当cinder存储后端为ceph时，就可以<br>利用ceph的增量快照功能，降低快照时间，减少快照过程对于虚拟机中运行业务的影响。</p>
 <p>所以，卷后端虚拟机+Ceph才是比较靠谱的选择。</p>
-<p>附上一张卷后端虚拟机做快照的流程图<br><img src="./nova-rbd-snapshot.png" alt="avatar"></p>
+<p>附上一张卷后端虚拟机做快照的流程图<br><img src="./img/nova-rbd-snapshot.png" alt="avatar"></p>
 <p>参考文档：</p>
 <ul>
 <li><a href="https://www.sebastien-han.fr/blog/2015/10/05/openstack-nova-snapshots-on-ceph-rbd/" target="_blank" rel="noopener">https://www.sebastien-han.fr/blog/2015/10/05/openstack-nova-snapshots-on-ceph-rbd/</a></li>
@@ -652,6 +652,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Barbican</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Keystone</a>
               </li>
              
@@ -669,10 +673,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">队列Queue</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Barbican</a>
               </li>
             
             <div class="clearfix"></div>
