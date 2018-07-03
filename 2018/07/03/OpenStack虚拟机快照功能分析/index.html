@@ -6,18 +6,22 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Archives: 2018 | Jeremy_Liu&#39;s Blog</title>
+  <title>OpenStack虚拟机快照功能分析 | Jeremy_Liu&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Open Source promotes a better world">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Jeremy_Liu&#39;s Blog">
-<meta property="og:url" content="http://yoursite.com/archives/2018/index.html">
+  <meta name="description" content="说明：  基于OpenStack Pike版本  OpenStack早就支持虚拟机快照功能，这对于一些运行关键业务的虚拟机来说很有必要。究竟快照功能能不能满足生产系统的高标准呢？ 目前，OpenStack虚拟机启动源支持镜像和卷，这两种方式创建出的虚拟机，快照过程也不同。 由镜像启动的虚拟机做快照时，只对系统盘进行快照，不对数据盘进行快照，快照过程中要挂起虚拟机，因此虚拟机中运行的业务可能会中断。">
+<meta name="keywords" content="OpenStack,Snapshot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenStack虚拟机快照功能分析">
+<meta property="og:url" content="http://yoursite.com/2018/07/03/OpenStack虚拟机快照功能分析/index.html">
 <meta property="og:site_name" content="Jeremy_Liu&#39;s Blog">
-<meta property="og:description" content="Open Source promotes a better world">
+<meta property="og:description" content="说明：  基于OpenStack Pike版本  OpenStack早就支持虚拟机快照功能，这对于一些运行关键业务的虚拟机来说很有必要。究竟快照功能能不能满足生产系统的高标准呢？ 目前，OpenStack虚拟机启动源支持镜像和卷，这两种方式创建出的虚拟机，快照过程也不同。 由镜像启动的虚拟机做快照时，只对系统盘进行快照，不对数据盘进行快照，快照过程中要挂起虚拟机，因此虚拟机中运行的业务可能会中断。">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/2018/07/03/OpenStack虚拟机快照功能分析/nova-rbd-snapshot.png">
+<meta property="og:updated_time" content="2018-07-03T03:32:20.232Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Jeremy_Liu&#39;s Blog">
-<meta name="twitter:description" content="Open Source promotes a better world">
+<meta name="twitter:title" content="OpenStack虚拟机快照功能分析">
+<meta name="twitter:description" content="说明：  基于OpenStack Pike版本  OpenStack早就支持虚拟机快照功能，这对于一些运行关键业务的虚拟机来说很有必要。究竟快照功能能不能满足生产系统的高标准呢？ 目前，OpenStack虚拟机启动源支持镜像和卷，这两种方式创建出的虚拟机，快照过程也不同。 由镜像启动的虚拟机做快照时，只对系统盘进行快照，不对数据盘进行快照，快照过程中要挂起虚拟机，因此虚拟机中运行的业务可能会中断。">
+<meta name="twitter:image" content="http://yoursite.com/2018/07/03/OpenStack虚拟机快照功能分析/nova-rbd-snapshot.png">
   
     <link rel="alternative" href="/atom.xml" title="Jeremy_Liu&#39;s Blog" type="application/atom+xml">
   
@@ -139,36 +143,50 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-OpenStack虚拟机快照功能分析" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2018" class="archive-year">2018</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/07/03/OpenStack虚拟机快照功能分析/" class="archive-article-date">
-  	<time datetime="2018-07-03T02:27:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-03</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/07/03/OpenStack虚拟机快照功能分析/">OpenStack虚拟机快照功能分析</a>
+    <h1 class="article-title" itemprop="name">
+      OpenStack虚拟机快照功能分析
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2018/07/03/OpenStack虚拟机快照功能分析/" class="archive-article-date">
+  	<time datetime="2018-07-03T02:27:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-03</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>说明：</p>
+<ul>
+<li>基于OpenStack Pike版本</li>
+</ul>
+<p>OpenStack早就支持虚拟机快照功能，这对于一些运行关键业务的虚拟机来说很有必要。<br>究竟快照功能能不能满足生产系统的高标准呢？</p>
+<p>目前，OpenStack虚拟机启动源支持镜像和卷，这两种方式创建出的虚拟机，快照过程<br>也不同。</p>
+<p>由镜像启动的虚拟机做快照时，只对系统盘进行快照，不对数据盘进行快照，快照过程<br>中要挂起虚拟机，因此虚拟机中运行的业务可能会中断。快照完成后，将快照上传到<br>glance服务中，保存为snapshot类型的镜像，并恢复虚拟机状态。</p>
+<p>由卷启动的虚拟机做快照时，同时对系统盘和数据盘进行快照，快照实际执行由cinder<br>存储服务完成。因此可以利用存储后端的快照功能。当cinder存储后端为ceph时，就可以<br>利用ceph的增量快照功能，降低快照时间，减少快照过程对于虚拟机中运行业务的影响。</p>
+<p>所以，卷后端虚拟机+Ceph才是比较靠谱的选择。</p>
+<p>附上一张卷后端虚拟机做快照的流程图<br><img src="./nova-rbd-snapshot.png" alt="avatar"></p>
+<p>参考文档：</p>
+<ul>
+<li><a href="https://www.sebastien-han.fr/blog/2015/10/05/openstack-nova-snapshots-on-ceph-rbd/" target="_blank" rel="noopener">https://www.sebastien-han.fr/blog/2015/10/05/openstack-nova-snapshots-on-ceph-rbd/</a></li>
+<li><a href="https://blueprints.launchpad.net/nova/+spec/volume-backed-server-rebuild" target="_blank" rel="noopener">https://blueprints.launchpad.net/nova/+spec/volume-backed-server-rebuild</a></li>
+<li><a href="https://zhangchenchen.github.io/2017/06/05/ceph-rbd-snapshot/" target="_blank" rel="noopener">https://zhangchenchen.github.io/2017/06/05/ceph-rbd-snapshot/</a></li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -184,149 +202,106 @@
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2018/07/03/OpenStack虚拟机快照功能分析/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/05/18/OpenStack-Keystone对于多因子认证的支持/" class="archive-article-date">
-  	<time datetime="2018-05-18T01:41:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-05-18</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2018/05/18/OpenStack-Keystone对于多因子认证的支持/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">OpenStack Keystone对于多因子认证的支持</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
+        
+        
+    </div>
+</aside>
+
+
+
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/05/18/OpenStack-Keystone对于多因子认证的支持/">OpenStack Keystone对于多因子认证的支持</a>
-    </h1>
+  
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">OpenStack</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Keystone</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Multi-Factor Authentication</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/04/28/Python-Queue简单使用/" class="archive-article-date">
-  	<time datetime="2018-04-28T09:03:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-04-28</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/04/28/Python-Queue简单使用/">Python Queue接口的简单说明</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Python</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">队列Queue</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2018/04/15/Encrypt-volumes-servers-images-with-OpenStack-Barbican/" class="archive-article-date">
-  	<time datetime="2018-04-15T14:06:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-04-15</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2018/04/15/Encrypt-volumes-servers-images-with-OpenStack-Barbican/">Encrypt volumes/servers/images with OpenStack Barbican</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">OpenStack</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Barbican</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
-  
-    </div></section>
-  
-
-    
 
 
           </div>
@@ -347,8 +322,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
