@@ -16,12 +16,12 @@
 <meta property="og:site_name" content="Jeremy_Liu&#39;s Blog">
 <meta property="og:description" content="说明：  基于OpenStack Pike版本  OpenStack早就支持虚拟机快照功能，这对于一些运行关键业务的虚拟机来说很有必要。究竟快照功能能不能满足生产系统的高标准呢？ 目前，OpenStack虚拟机启动源支持镜像和卷，这两种方式创建出的虚拟机，快照过程也不同。 由镜像启动的虚拟机做快照时，只对系统盘进行快照，不对数据盘进行快照，快照过程中要挂起虚拟机，因此虚拟机中运行的业务可能会中断。">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://yoursite.com/2018/07/03/OpenStack虚拟机快照功能分析/img/nova-rbd-snapshot.png">
-<meta property="og:updated_time" content="2018-07-03T03:38:38.969Z">
+<meta property="og:image" content="http://yoursite.com/img/nova-rbd-snapshot.png">
+<meta property="og:updated_time" content="2018-07-03T03:40:06.908Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OpenStack虚拟机快照功能分析">
 <meta name="twitter:description" content="说明：  基于OpenStack Pike版本  OpenStack早就支持虚拟机快照功能，这对于一些运行关键业务的虚拟机来说很有必要。究竟快照功能能不能满足生产系统的高标准呢？ 目前，OpenStack虚拟机启动源支持镜像和卷，这两种方式创建出的虚拟机，快照过程也不同。 由镜像启动的虚拟机做快照时，只对系统盘进行快照，不对数据盘进行快照，快照过程中要挂起虚拟机，因此虚拟机中运行的业务可能会中断。">
-<meta name="twitter:image" content="http://yoursite.com/2018/07/03/OpenStack虚拟机快照功能分析/img/nova-rbd-snapshot.png">
+<meta name="twitter:image" content="http://yoursite.com/img/nova-rbd-snapshot.png">
   
     <link rel="alternative" href="/atom.xml" title="Jeremy_Liu&#39;s Blog" type="application/atom+xml">
   
@@ -172,7 +172,7 @@
 <p>由镜像启动的虚拟机做快照时，只对系统盘进行快照，不对数据盘进行快照，快照过程<br>中要挂起虚拟机，因此虚拟机中运行的业务可能会中断。快照完成后，将快照上传到<br>glance服务中，保存为snapshot类型的镜像，并恢复虚拟机状态。</p>
 <p>由卷启动的虚拟机做快照时，同时对系统盘和数据盘进行快照，快照实际执行由cinder<br>存储服务完成。因此可以利用存储后端的快照功能。当cinder存储后端为ceph时，就可以<br>利用ceph的增量快照功能，降低快照时间，减少快照过程对于虚拟机中运行业务的影响。</p>
 <p>所以，卷后端虚拟机+Ceph才是比较靠谱的选择。</p>
-<p>附上一张卷后端虚拟机做快照的流程图<br><img src="./img/nova-rbd-snapshot.png" alt="avatar"></p>
+<p>附上一张卷后端虚拟机做快照的流程图<br><img src="/img/nova-rbd-snapshot.png" alt="avatar"></p>
 <p>参考文档：</p>
 <ul>
 <li><a href="https://www.sebastien-han.fr/blog/2015/10/05/openstack-nova-snapshots-on-ceph-rbd/" target="_blank" rel="noopener">https://www.sebastien-han.fr/blog/2015/10/05/openstack-nova-snapshots-on-ceph-rbd/</a></li>
