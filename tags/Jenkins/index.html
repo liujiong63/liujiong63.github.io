@@ -6,12 +6,12 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Jeremy_Liu&#39;s Blog</title>
+  <title>Tag: Jenkins | Jeremy_Liu&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="Open Source promotes a better world">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Jeremy_Liu&#39;s Blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta property="og:url" content="http://yoursite.com/tags/Jenkins/index.html">
 <meta property="og:site_name" content="Jeremy_Liu&#39;s Blog">
 <meta property="og:description" content="Open Source promotes a better world">
 <meta property="og:locale" content="default">
@@ -141,49 +141,34 @@
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-Jenkins-integrate-with-OpenStack-Cloud-Plugin" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
+  
     
-      <header class="article-header">
-        
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2018" class="archive-year">2018</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2018/07/04/Jenkins-integrate-with-OpenStack-Cloud-Plugin/" class="archive-article-date">
+  	<time datetime="2018-07-04T10:31:17.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-04</time>
+</a>
+        </div>
+    	 
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/04/Jenkins-integrate-with-OpenStack-Cloud-Plugin/">Jenkins integrate with OpenStack Cloud Plugin</a>
+      <a class="archive-article-title" href="/2018/07/04/Jenkins-integrate-with-OpenStack-Cloud-Plugin/">Jenkins integrate with OpenStack Cloud Plugin</a>
     </h1>
   
 
-        
-        <a href="/2018/07/04/Jenkins-integrate-with-OpenStack-Cloud-Plugin/" class="archive-article-date">
-  	<time datetime="2018-07-04T10:31:17.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-04</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>我们知道，Jenkins的slave节点可以通过手动方式添加固定地址的机器，节点可以<br>有一些标签（label）信息用于运行特定的任务。这种方式下，如果维护的slave<br>节点数量很多的话，节点的维护工作量可能就会非常大。另一方面，在任务非常少<br>的时间段，slave节点的利用率又会非常低，资源白白消耗了。</p>
-<p>对于持续集成来说，将任务尽可能的自动化，带来的便利不言而喻。解放双手，拥抱<br>Dev Ops吧！</p>
-<p>我最近在维护Jenkins的slave节点时，不断被重复性的工作折磨。再想到以前玩OpenStack社区<br>的时候，他们的持续集成系统的庞大、复杂，但是自动化真的做的很好很好。OpenStack最开始<br>用的也是Jenkins，然后是社区自己开发的zuul系统。能够做到配置更新时，CI自动更新，自动<br>配置测试环境等。可惜，我一直未彻底搞懂其中的原理。有机会应该要玩一玩zuul，体验一把。</p>
-<p>遇到痛点了，我就查了查，原来Jenkins早就支持对接OpenStack云了。于是快速的部署了一套<br>Pike版本的OpenStack环境，开始对接。</p>
-<p>Jenkins安装OpenStack Cloud Plugin，之后在“系统管理” - “系统设置”里“新增一个云”。<br>云基础环境的配置项有endpoint、credential、region，分别配置为keystone的端点、OpenStack管理员<br>账号密码、region名称，还要设置这个云在Jenkins里的别名。</p>
-<p>Jenkins创建OpenStack虚拟机的配置也要设置。需要设置虚拟机启动源、flavor、网络ID、浮动IP池、可用域，<br>以及虚拟机创建超时的时间。Jenkins连接虚拟机所需的凭证（比如用户名密码、SSH密钥）也要正确设置。</p>
-<p>Jenkins还支持同一个OpenStack云创建出不同模板的虚拟机，也就是通过Templates进行设置的。Templates必须要<br>设置名称和标签。该标签就是Jenkins slave的标签，用于运行指定的任务。Templates中也可以设置虚拟机的规格<br>信息，如果不设置，则继承OpenStack云的全局设置。</p>
-<p>如果你比较熟悉OpenStack的基本概念和操作，这部分的设置应该很轻松。贴一下我的配置吧。<br>这两张是OpenStack环境的信息和虚拟机规格信息。<br><img src="/img/cloud-1.png" alt="avatar"><br><img src="/img/cloud-2.png" alt="avatar"><br>这两张是Templates的配置参数。<br><img src="/img/template-1.png" alt="avatar"><br><img src="/img/template-2.png" alt="avatar"></p>
-<p>上面的配置完成后，接下来设置Jenkins Job。</p>
-<p>Job的“General”里设置“Restrict where this project can be run”为Templates里的标签名称，在“构建环境”里<br>有“OpenStack Instance Creation”和“OpenStack Single-Use Slave”，也做相应设置即可。<br>当勾选上“OpenStack Single-Use Slave”时，该Job完成后，虚拟机会立刻置于“pending delete”状态，大约10分钟后，<br>该节点会从Jenkins里删除，与此同时，Jenkins在OpenStack里创建的虚拟机也会被删除。</p>
-<p>我尝试配置Jenkins Job完成后立即删除节点及虚拟机，但未发现有相关的配置。在此过程中，又查到Jenkins的JClouds<br>插件，支持对接各种cloud provider，也包括OpenStack。于是，我又把相同的OpenStack环境在JClouds插件里进行配置，<br>在配置endpoint的时候始终不成功，一直说ResourceNotFound。看了一下，Jenkins尝试连接keystone服务进行认证出错，<br>其访问的keystone地址是<code>http://172.16.6.88:35357/v3/tokens</code>。嗯？？？keystone认证token的URL不应该是<br><code>http://172.16.6.88:35357/v3/auth/tokens</code>吗？莫名其妙。然后又把endpoint设置成<code>http://172.16.6.88:35357/v3/auth/</code>，<br>依旧错误，400 Bad Request; “‘identity’ is a required property”。这次是认证的数据格式错误。于是作罢。。。</p>
-<p>参考文档：</p>
-<ul>
-<li><a href="https://wiki.jenkins.io/display/JENKINS/Openstack+Cloud+Plugin" target="_blank" rel="noopener">https://wiki.jenkins.io/display/JENKINS/Openstack+Cloud+Plugin</a></li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -199,473 +184,19 @@
 		</ul>
 	</div>
 
-      
+          
 
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/07/04/Jenkins-integrate-with-OpenStack-Cloud-Plugin/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
+        </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
-    <article id="post-OpenStack虚拟机快照功能分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
+  
+    </div></section>
+  
+
     
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/03/OpenStack虚拟机快照功能分析/">OpenStack虚拟机快照功能分析</a>
-    </h1>
-  
-
-        
-        <a href="/2018/07/03/OpenStack虚拟机快照功能分析/" class="archive-article-date">
-  	<time datetime="2018-07-03T02:27:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-07-03</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>说明：</p>
-<ul>
-<li>基于OpenStack Pike版本</li>
-</ul>
-<p>OpenStack早就支持虚拟机快照功能，这对于一些运行关键业务的虚拟机来说很有必要。<br>究竟快照功能能不能满足生产系统的高标准呢？</p>
-<p>目前，OpenStack虚拟机启动源支持镜像和卷，这两种方式创建出的虚拟机，快照过程<br>也不同。</p>
-<p>由镜像启动的虚拟机做快照时，只对系统盘进行快照，不对数据盘进行快照，快照过程<br>中要挂起虚拟机，因此虚拟机中运行的业务可能会中断。快照完成后，将快照上传到<br>glance服务中，保存为snapshot类型的镜像，并恢复虚拟机状态。</p>
-<p>由卷启动的虚拟机做快照时，同时对系统盘和数据盘进行快照，快照实际执行由cinder<br>存储服务完成。因此可以利用存储后端的快照功能。当cinder存储后端为ceph时，就可以<br>利用ceph的增量快照功能，降低快照时间，减少快照过程对于虚拟机中运行业务的影响。</p>
-<p>所以，卷后端虚拟机+Ceph才是比较靠谱的选择。</p>
-<p>附上一张卷后端虚拟机做快照的流程图<br><img src="/img/nova-rbd-snapshot.png" alt="avatar"></p>
-<p>参考文档：</p>
-<ul>
-<li><a href="https://www.sebastien-han.fr/blog/2015/10/05/openstack-nova-snapshots-on-ceph-rbd/" target="_blank" rel="noopener">https://www.sebastien-han.fr/blog/2015/10/05/openstack-nova-snapshots-on-ceph-rbd/</a></li>
-<li><a href="https://blueprints.launchpad.net/nova/+spec/volume-backed-server-rebuild" target="_blank" rel="noopener">https://blueprints.launchpad.net/nova/+spec/volume-backed-server-rebuild</a></li>
-<li><a href="https://zhangchenchen.github.io/2017/06/05/ceph-rbd-snapshot/" target="_blank" rel="noopener">https://zhangchenchen.github.io/2017/06/05/ceph-rbd-snapshot/</a></li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">OpenStack</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Snapshot</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/07/03/OpenStack虚拟机快照功能分析/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-OpenStack-Keystone对于多因子认证的支持" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/05/18/OpenStack-Keystone对于多因子认证的支持/">OpenStack Keystone对于多因子认证的支持</a>
-    </h1>
-  
-
-        
-        <a href="/2018/05/18/OpenStack-Keystone对于多因子认证的支持/" class="archive-article-date">
-  	<time datetime="2018-05-18T01:41:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-05-18</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>说明：</p>
-<ul>
-<li>基于Keystone Queens版本</li>
-</ul>
-<h1 id="支持情况"><a href="#支持情况" class="headerlink" title="支持情况"></a>支持情况</h1><p>OpenStack Keystone在v3版本的API中支持了多因子认证特性，当前已经实现的认证插件有：</p>
-<ul>
-<li>external</li>
-<li>password</li>
-<li>token</li>
-<li>oauth1</li>
-<li>mapped</li>
-<li>application_credential</li>
-<li>totp</li>
-</ul>
-<p>其中totp插件默认没有开启。</p>
-<h1 id="如何使用多因子认证功能？"><a href="#如何使用多因子认证功能？" class="headerlink" title="如何使用多因子认证功能？"></a>如何使用多因子认证功能？</h1><p>对于Keystone默认启用了的认证插件，只需要在调用Keystone的认证接口中传入指定格式的数据，服务端会自动解析并进行认证。<br>通常，数据格式如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;auth&quot;: &#123;</span><br><span class="line">        &quot;identity&quot;: &#123;</span><br><span class="line">            &quot;custom-plugin&quot;: &#123;</span><br><span class="line">                &quot;custom-data&quot;: &quot;sdfdfsfsfsdfsf&quot;</span><br><span class="line">            &#125;,</span><br><span class="line">            &quot;methods&quot;: [</span><br><span class="line">                &quot;custom-plugin&quot;,</span><br><span class="line">                &quot;password&quot;,</span><br><span class="line">                &quot;token&quot;</span><br><span class="line">            ],</span><br><span class="line">            &quot;password&quot;: &#123;</span><br><span class="line">                &quot;user&quot;: &#123;</span><br><span class="line">                    &quot;id&quot;: &quot;s23sfad1&quot;,</span><br><span class="line">                    &quot;password&quot;: &quot;secret&quot;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            &quot;token&quot;: &#123;</span><br><span class="line">                &quot;id&quot;: &quot;sdfafasdfsfasfasdfds&quot;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>identity</code>是所有认证相关的数据，<code>methods</code>中指定了认证插件有哪些，各认证插件有自己的认证数据/格式。Keystone服务解析数据并依次认证，必须所有插件都认证成功才为用户颁发token。</p>
-<h1 id="如何添加新的认证插件？"><a href="#如何添加新的认证插件？" class="headerlink" title="如何添加新的认证插件？"></a>如何添加新的认证插件？</h1><p>Keystone认证插件的扩展性很好，所有认证插件必须继承自<code>class keystone.auth.plugins.base.AuthMethodHandler</code>并实现各自的<code>authenticate</code>方法。新的插件名称要添加到keystone配置文件的<code>auth</code>组下的<code>methods</code>配置项中，以便Keystone服务在启动时加载该插件。</p>
-<p><code>authenticate</code>方法有如下参数：</p>
-<ul>
-<li>context - keystone’s request context</li>
-<li>auth_payload - the content of the authentication for a given method</li>
-<li>auth_context - user authentication context, a dictionary shared by all plugins. It contains method_names and extras by default</li>
-</ul>
-<p>认证成功后，<code>auth_context</code>中要提供有效的<code>user_id</code>参数，认证失败，必须抛出<code>keystone.exception.Unauthorized</code>的异常。</p>
-<h1 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h1><ul>
-<li><a href="https://docs.openstack.org/keystone/latest/contributor/auth-plugins.html" target="_blank" rel="noopener">https://docs.openstack.org/keystone/latest/contributor/auth-plugins.html</a></li>
-</ul>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">OpenStack</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Keystone</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">Multi-Factor Authentication</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/05/18/OpenStack-Keystone对于多因子认证的支持/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Python-Queue简单使用" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/04/28/Python-Queue简单使用/">Python Queue接口的简单说明</a>
-    </h1>
-  
-
-        
-        <a href="/2018/04/28/Python-Queue简单使用/" class="archive-article-date">
-  	<time datetime="2018-04-28T09:03:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-04-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><strong>Queue是线程安全的</strong></p>
-<h1 id="创建队列"><a href="#创建队列" class="headerlink" title="创建队列"></a>创建队列</h1><p>Queue的初始化函数中可以指定队列的最大长度，默认值是0，表示队列长度为无限长。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">def __init__(self, maxsize=0):  </span><br><span class="line">    self.maxsize = maxsize  </span><br><span class="line">    self._init(maxsize)  </span><br><span class="line">    # mutex must be held whenever the queue is mutating.  All methods  </span><br><span class="line">    # that acquire mutex must release it before returning.  mutex  </span><br><span class="line">    # is shared between the three conditions, so acquiring and  </span><br><span class="line">    # releasing the conditions also acquires and releases mutex.  </span><br><span class="line">    self.mutex = _threading.Lock()  </span><br><span class="line">    # Notify not_empty whenever an item is added to the queue; a  </span><br><span class="line">    # thread waiting to get is notified then.  </span><br><span class="line">    self.not_empty = _threading.Condition(self.mutex)  </span><br><span class="line">    # Notify not_full whenever an item is removed from the queue;  </span><br><span class="line">    # a thread waiting to put is notified then.  </span><br><span class="line">    self.not_full = _threading.Condition(self.mutex)  </span><br><span class="line">    # Notify all_tasks_done whenever the number of unfinished tasks  </span><br><span class="line">    # drops to zero; thread waiting to join() is notified to resume  </span><br><span class="line">    self.all_tasks_done = _threading.Condition(self.mutex)  </span><br><span class="line">    self.unfinished_tasks = 0</span><br></pre></td></tr></table></figure>
-<h1 id="向队列添加数据"><a href="#向队列添加数据" class="headerlink" title="向队列添加数据"></a>向队列添加数据</h1><p>首先申请获取互斥锁，获得后，如果队列未满，则向队列添加数据；如果队列已满，则等待。最后处理完成后释放互斥锁。<br>该方法带有两个额外的参数（block和timeout），用于控制队列已满时，是否阻塞线程，以及阻塞的最大时间。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">def put(self, item, block=True, timeout=None):  </span><br><span class="line">    &quot;&quot;&quot;Put an item into the queue. </span><br><span class="line"> </span><br><span class="line">    If optional args &apos;block&apos; is true and &apos;timeout&apos; is None (the default), </span><br><span class="line">    block if necessary until a free slot is available. If &apos;timeout&apos; is </span><br><span class="line">    a non-negative number, it blocks at most &apos;timeout&apos; seconds and raises </span><br><span class="line">    the Full exception if no free slot was available within that time. </span><br><span class="line">    Otherwise (&apos;block&apos; is false), put an item on the queue if a free slot </span><br><span class="line">    is immediately available, else raise the Full exception (&apos;timeout&apos; </span><br><span class="line">    is ignored in that case). </span><br><span class="line">    &quot;&quot;&quot;</span><br></pre></td></tr></table></figure>
-<h1 id="从队列中获取数据"><a href="#从队列中获取数据" class="headerlink" title="从队列中获取数据"></a>从队列中获取数据</h1><p>首先申请获取互斥锁，获得后，如果队列中有数据，则取出数据，同时该数据从队列中移除。<br>该方法同样带有两个额外参数，用于控制队列为空时，是否阻塞线程，以及阻塞的最大时间。 </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">def get(self, block=True, timeout=None):  </span><br><span class="line">    &quot;&quot;&quot;Remove and return an item from the queue. </span><br><span class="line"> </span><br><span class="line">    If optional args &apos;block&apos; is true and &apos;timeout&apos; is None (the default), </span><br><span class="line">    block if necessary until an item is available. If &apos;timeout&apos; is </span><br><span class="line">    a non-negative number, it blocks at most &apos;timeout&apos; seconds and raises </span><br><span class="line">    the Empty exception if no item was available within that time. </span><br><span class="line">    Otherwise (&apos;block&apos; is false), return an item if one is immediately </span><br><span class="line">    available, else raise the Empty exception (&apos;timeout&apos; is ignored </span><br><span class="line">    in that case). </span><br><span class="line">    &quot;&quot;&quot;</span><br></pre></td></tr></table></figure>
-<h1 id="put-nowait-get-nowait"><a href="#put-nowait-get-nowait" class="headerlink" title="put_nowait/get_nowait"></a>put_nowait/get_nowait</h1><p>只是对put/get的一层封装而已。是否无阻塞的添加/获取数据。</p>
-<h1 id="qsize-empty-full"><a href="#qsize-empty-full" class="headerlink" title="qsize/empty/full"></a>qsize/empty/full</h1><p>这三个方法分别获取队列的长度、是否是空队列、是否已满。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Python</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">队列Queue</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/04/28/Python-Queue简单使用/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Encrypt-volumes-servers-images-with-OpenStack-Barbican" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/04/15/Encrypt-volumes-servers-images-with-OpenStack-Barbican/">Encrypt volumes/servers/images with OpenStack Barbican</a>
-    </h1>
-  
-
-        
-        <a href="/2018/04/15/Encrypt-volumes-servers-images-with-OpenStack-Barbican/" class="archive-article-date">
-  	<time datetime="2018-04-15T14:06:42.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-04-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>更新历史：</p>
-<ul>
-<li>2018.04.15，初稿完成</li>
-<li>2018.05.01，添加加密卷的验证部分，添加镜像验签部分</li>
-</ul>
-<h1 id="使用Barbican加密卷-虚拟机-镜像"><a href="#使用Barbican加密卷-虚拟机-镜像" class="headerlink" title="使用Barbican加密卷/虚拟机/镜像"></a>使用Barbican加密卷/虚拟机/镜像</h1><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><p>使用devstack部署的OpenStack单节点</p>
-<h2 id="1、Nova-ephemeral-storage-encryption"><a href="#1、Nova-ephemeral-storage-encryption" class="headerlink" title="1、Nova ephemeral storage encryption"></a>1、Nova ephemeral storage encryption</h2><p>nova的配置文件中配置开启临时存储加密：</p>
-<pre><code>[ephemeral_storage_encryption]
-enabled=True
-key_size=256
-</code></pre><p><strong>需要配置<code>key_size</code>为支持的值，因为barbican默认使用simple crypto插件生成密钥，而simple crypto支持的密钥长度有限。</strong><br>重启nova相关的服务即可。</p>
-<h2 id="2、卷加密"><a href="#2、卷加密" class="headerlink" title="2、卷加密"></a>2、卷加密</h2><p>编辑<code>/etc/cinder/cinder.conf</code>，配置cinder服务的密钥管理后端为barbican：</p>
-<pre><code>[key_manager]
-#fixed_key = bae3516cc1c0eb18b05440eba8012a4a880a2ee04d584a9c1579445e675b12defdc716ec
-backend = barbican
-</code></pre><p>编辑<code>/etc/nova/nova.conf</code>，配置nova服务的密钥管理后端为barbican：</p>
-<pre><code>[key_manager]
-#fixed_key = bae3516cc1c0eb18b05440eba8012a4a880a2ee04d584a9c1579445e675b12defdc716ec
-backend = barbican
-</code></pre><p>重启cinder、nova相关的服务。</p>
-<p>创建加密卷类型：</p>
-<pre><code>openstack volume type create --encryption-provider luks --encryption-cipher aes-xts-plain64 --encryption-key-size 256 --encryption-control-location front-end LUKS
-</code></pre><p>创建加密卷：</p>
-<pre><code>openstack volume create --size 1 --type LUKS &apos;encrypted volume&apos;
-</code></pre><p>创建非加密卷：</p>
-<pre><code>openstack volume create --size 1 &apos;unencrypted volume&apos;
-</code></pre><p>创建虚拟机：</p>
-<pre><code>openstack server create --image cirros-0.3.5-x86_64-disk --flavor m1.tiny TESTVM
-</code></pre><p>将卷挂载到虚拟机：</p>
-<pre><code>openstack server add volume --device /dev/vdb TESTVM &apos;encrypted volume&apos;
-openstack server add volume --device /dev/vdc TESTVM &apos;unencrypted volume&apos;
-</code></pre><p>在虚拟机中向卷写数据：</p>
-<pre><code>echo &quot;encrypted&quot; &gt;&gt; /dev/vdb
-echo &quot;unencrypted&quot; &gt;&gt; /dev/vdc
-sync &amp;&amp; sleep 2
-</code></pre><p>在cinder-volume服务所在主机上搜索卷中数据：</p>
-<pre><code>strings /dev/stack-volumes-lvmdriver-1/volume-* | grep &quot;encrypt&quot;
-unencrypted
-</code></pre><p>只能读到非加密卷中的数据。</p>
-<h2 id="3、镜像签名-验签"><a href="#3、镜像签名-验签" class="headerlink" title="3、镜像签名/验签"></a>3、镜像签名/验签</h2><p>修改glance配置文件<code>/etc/glance/glance-api.conf</code>，添加如下配置：</p>
-<pre><code>[barbican]
-auth_endpoint = http://localhost/identity/v3
-
-[key_manager]
-backend = barbican
-</code></pre><p>重启glance相关服务。</p>
-<p>准备密钥、证书，使用openssl生成。</p>
-<pre><code>openssl genrsa -out private_key.pem 1024
-openssl rsa -pubout -in private_key.pem -out public_key.pem
-openssl req -new -key private_key.pem -out cert_request.csr
-openssl x509 -req -days 14 -in cert_request.csr -signkey private_key.pem -out new_cert.crt
-</code></pre><p>上传证书到barbican。</p>
-<pre><code>openstack secret store --name test --algorithm RSA --expiration 2018-06-29 --secret-type certificate --payload-content-type &quot;application/octet-stream&quot; --payload-content-encoding base64 --payload &quot;$(base64 new_cert.crt)&quot;
-+---------------+-------------------------------------------------------------------------------+
-| Field         | Value                                                                         |
-+---------------+-------------------------------------------------------------------------------+
-| Secret href   | http://localhost/key-manager/v1/secrets/a9e46728-2ac6-4adf-a2ff-35250607ab14 |
-
-cert_uuid=a9e46728-2ac6-4adf-a2ff-35250607ab14
-</code></pre><p>为镜像生成签名。</p>
-<pre><code>openssl dgst -sha256 -sign private_key.pem -sigopt rsa_padding_mode:pss -out cirrosimage.signature cirros-0.3.5-x86_64-disk.img
-base64 -w 0 cirrosimage.signature &gt; cirrosimage.signature.b64
-image_signature=$(cat cirrosimage.signature.b64)
-</code></pre><p>上传镜像。</p>
-<pre><code>glance image-create --name cirrosSignedImage --container-format bare --disk-format qcow2 --property img_signature=&quot;$image_signature&quot; --property img_signature_certificate_uuid=&quot;$cert_uuid&quot; --property img_signature_hash_method=&apos;SHA-256&apos; --property img_signature_key_type=&apos;RSA-PSS&apos; &lt; cirros-0.3.5-x86_64-disk.img
-</code></pre><p>如果镜像签名验证失败，镜像则创建失败。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">OpenStack</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Barbican</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2018/04/15/Encrypt-volumes-servers-images-with-OpenStack-Barbican/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-  
 
 
           </div>
@@ -685,10 +216,10 @@ image_signature=$(cat cirrosimage.signature.b64)
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
+		isHome: false,
 		isPost: false,
 		isArchive: false,
-		isTag: false,
+		isTag: true,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: false,
