@@ -17,7 +17,7 @@
 <meta property="og:description" content="说明：  基于OpenStack Pike版本  OpenStack早就支持虚拟机快照功能，这对于一些运行关键业务的虚拟机来说很有必要。究竟快照功能能不能满足生产系统的高标准呢？ 目前，OpenStack虚拟机启动源支持镜像和卷，这两种方式创建出的虚拟机，快照过程也不同。 由镜像启动的虚拟机做快照时，只对系统盘进行快照，不对数据盘进行快照，快照过程中要挂起虚拟机，因此虚拟机中运行的业务可能会中断。">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://yoursite.com/img/nova-rbd-snapshot.png">
-<meta property="og:updated_time" content="2018-07-03T03:44:39.720Z">
+<meta property="og:updated_time" content="2018-07-03T03:44:39.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OpenStack虚拟机快照功能分析">
 <meta name="twitter:description" content="说明：  基于OpenStack Pike版本  OpenStack早就支持虚拟机快照功能，这对于一些运行关键业务的虚拟机来说很有必要。究竟快照功能能不能满足生产系统的高标准呢？ 目前，OpenStack虚拟机启动源支持镜像和卷，这两种方式创建出的虚拟机，快照过程也不同。 由镜像启动的虚拟机做快照时，只对系统盘进行快照，不对数据盘进行快照，快照过程中要挂起虚拟机，因此虚拟机中运行的业务可能会中断。">
@@ -351,7 +351,7 @@
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2018 Jeremy Liu
+    		&copy; 2019 Jeremy Liu
     	</div>
     </div>
   </div>
@@ -432,6 +432,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Snapshot</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Keystone</a>
               </li>
              
@@ -440,15 +444,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Snapshot</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Python</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">队列Queue</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">pypi repo</a>
               </li>
             
             <div class="clearfix"></div>

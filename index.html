@@ -141,6 +141,99 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-搭建私有pypi源" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/02/14/搭建私有pypi源/">搭建私有pypi源</a>
+    </h1>
+  
+
+        
+        <a href="/2019/02/14/搭建私有pypi源/" class="archive-article-date">
+  	<time datetime="2019-02-14T07:33:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-02-14</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近公司的单元测试任务经常失败，基本都是因为网络原因下载pip包失败，为此，花了点时间搭建了私有的pypi源来解决此类问题。</p>
+<h2 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h2><p>需要准备一台服务器，分配足够的磁盘空间（不少于500G）。</p>
+<h2 id="安装bandersnatch"><a href="#安装bandersnatch" class="headerlink" title="安装bandersnatch"></a>安装bandersnatch</h2><p>我试着安装了几个不同版本的bandersnatch，只有<strong>1.11</strong>版本安装成功。</p>
+<pre><code>wget https://bitbucket.org/pypa/bandersnatch/get/1.11.tar.gz
+tar -xzvf 1.11.tar.gz
+</code></pre><p>安装</p>
+<pre><code>cd pypa-bandersnatch-76b72f3ebd6c
+python setup.py install
+pip install -r pypa-bandersnatch-76b72f3ebd6c/requirements.txt
+</code></pre><h2 id="初始化及配置"><a href="#初始化及配置" class="headerlink" title="初始化及配置"></a>初始化及配置</h2><p>首次运行时创建配置文件</p>
+<pre><code>bandersnatch mirror
+</code></pre><p>这一步,会创建默认的配置文件/etc/bandersnatch.conf</p>
+<p>修改配置文件</p>
+<pre><code>vim /etc/bandersnatch.conf
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">[mirror]</span><br><span class="line">; The directory where the mirror data will be stored.</span><br><span class="line">directory = /opt/pip</span><br><span class="line"></span><br><span class="line">; The PyPI server which will be mirrored.</span><br><span class="line">; master = https://testpypi.python.org</span><br><span class="line">; scheme for PyPI server MUST be https</span><br><span class="line">master = https://pypi.python.org</span><br><span class="line"></span><br><span class="line">; The network socket timeout to use for all connections. This is set to a</span><br><span class="line">; somewhat aggressively low value: rather fail quickly temporarily and re-run</span><br><span class="line">; the client soon instead of having a process hang infinitely and have TCP not</span><br><span class="line">; catching up for ages.</span><br><span class="line">timeout = 10</span><br><span class="line"></span><br><span class="line">; Number of worker threads to use for parallel downloads.</span><br><span class="line">; Recommendations for worker thread setting:</span><br><span class="line">; - leave the default of 3 to avoid overloading the pypi master</span><br><span class="line">; - official servers located in data centers could run 10 workers</span><br><span class="line">; - anything beyond 10 is probably unreasonable and avoided by bandersnatch</span><br><span class="line">workers = 3</span><br><span class="line"></span><br><span class="line">; Whether to hash package indexes</span><br><span class="line">; Note that package index directory hashing is incompatible with pip, and so</span><br><span class="line">; this should only be used in an environment where it is behind an application</span><br><span class="line">; that can translate URIs to filesystem locations.  For example, with the</span><br><span class="line">; following Apache RewriteRule:</span><br><span class="line">;     RewriteRule ^([^/])([^/]*)/$ /mirror/pypi/web/simple/$1/$1$2/</span><br><span class="line">;     RewriteRule ^([^/])([^/]*)/([^/]+)$/ /mirror/pypi/web/simple/$1/$1$2/$3</span><br><span class="line">; Setting this to true would put the package &apos;abc&apos; index in simple/a/abc.</span><br><span class="line">; Recommended setting: the default of false for full pip/pypi compatability.</span><br><span class="line">hash-index = false</span><br><span class="line"></span><br><span class="line">; Whether to stop a sync quickly after an error is found or whether to continue</span><br><span class="line">; syncing but not marking the sync as successful. Value should be &quot;true&quot; or</span><br><span class="line">; &quot;false&quot;.</span><br><span class="line">stop-on-error = false</span><br><span class="line"></span><br><span class="line">; Whether or not files that have been deleted on the master should be deleted</span><br><span class="line">; on the mirror, too.</span><br><span class="line">; IMPORTANT: if you are running an official mirror than you *need* to leave</span><br><span class="line">; this on.</span><br><span class="line">delete-packages = true</span><br><span class="line"></span><br><span class="line">; Advanced logging configuration. Uncomment and set to the location of a</span><br><span class="line">; python logging format logging config file.</span><br><span class="line">; log-config = /etc/bandersnatch-log.conf</span><br><span class="line"></span><br><span class="line">[statistics]</span><br><span class="line">; A glob pattern matching all access log files that should be processed to</span><br><span class="line">; generate daily access statistics that will be aggregated on the master PyPI.</span><br><span class="line">access-log-pattern = /var/log/nginx/*.pypi.python.org*access*</span><br><span class="line"></span><br><span class="line">; vim: set ft=cfg:</span><br></pre></td></tr></table></figure>
+<h2 id="开始同步"><a href="#开始同步" class="headerlink" title="开始同步"></a>开始同步</h2><pre><code>bandersnatch  mirror
+</code></pre><h2 id="添加到定时任务"><a href="#添加到定时任务" class="headerlink" title="添加到定时任务"></a>添加到定时任务</h2><p>添加到cron的定时任务，例如每天同步。</p>
+<pre><code>[root@Ctrust ~]# cat /etc/cron.daily/sync-pip.cron
+#!/bin/bash
+/usr/bin/bandersnatch mirror
+</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">pypi repo</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/02/14/搭建私有pypi源/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Jenkins-integrate-with-OpenStack-Cloud-Plugin" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -675,7 +768,7 @@ image_signature=$(cat cirrosimage.signature.b64)
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2018 Jeremy Liu
+    		&copy; 2019 Jeremy Liu
     	</div>
     </div>
   </div>
@@ -756,6 +849,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Snapshot</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Keystone</a>
               </li>
              
@@ -764,15 +861,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Snapshot</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Python</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">队列Queue</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">pypi repo</a>
               </li>
             
             <div class="clearfix"></div>
