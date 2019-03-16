@@ -141,6 +141,99 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-gerrit集成gitweb" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/03/16/gerrit集成gitweb/">gerrit集成gitweb</a>
+    </h1>
+  
+
+        
+        <a href="/2019/03/16/gerrit集成gitweb/" class="archive-article-date">
+  	<time datetime="2019-03-16T14:36:55.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-03-16</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>环境：CentOS release 6.6 (Final)</p>
+<h2 id="安装gitweb"><a href="#安装gitweb" class="headerlink" title="安装gitweb"></a>安装gitweb</h2><pre><code>yum install gitweb
+</code></pre><p>安装完成后会有如下文件：/var/www/git/gitweb.cgi</p>
+<h2 id="配置gitweb"><a href="#配置gitweb" class="headerlink" title="配置gitweb"></a>配置gitweb</h2><p>修改gitweb的配置文件（/etc/gitweb.conf），将配置项“$projectroot”修改为gerrit的git仓库目录</p>
+<pre><code>$projectroot = &quot;/etc/gerrit/git&quot;
+</code></pre><h2 id="配置gerrit"><a href="#配置gerrit" class="headerlink" title="配置gerrit"></a>配置gerrit</h2><p>修改gerrit的配置文件（gerrit.config），添加如下配置</p>
+<pre><code>[gitweb]
+type = gitweb
+cgi = /var/www/git/gitweb.cgi
+</code></pre><h2 id="配置httpd"><a href="#配置httpd" class="headerlink" title="配置httpd"></a>配置httpd</h2><p>使用httpd作为gerrit服务的反向代理，修改httpd的配置文件<code>/etc/httpd/conf/httpd.conf</code>，添加如下配置</p>
+<pre><code>Alias /gitweb &quot;/var/www/git&quot;
+&lt;Directory &quot;/var/www/git&quot;&gt;
+    Options FollowSymLinks +ExecCGI
+    AddHandler cgi-script .cgi
+    DirectoryIndex index.cgi gitweb.cgi
+    Order allow,deny
+    Allow from all
+&lt;/Directory&gt;
+</code></pre><h2 id="配置gerrit的权限"><a href="#配置gerrit的权限" class="headerlink" title="配置gerrit的权限"></a>配置gerrit的权限</h2><p>使用管理员帐号登录gerrit，修改<code>All-Projects</code>的权限，为<code>refs/*</code>和<code>refs/meta/config</code>的<code>Read</code>配置项配置合适的权限。</p>
+<h2 id="重启服务"><a href="#重启服务" class="headerlink" title="重启服务"></a>重启服务</h2><p>重启httpd和gerrit服务，之后登录到gerrit界面可以在项目列表中看到gitweb链接。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">gerrit gitweb</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/03/16/gerrit集成gitweb/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-配置gerrit项目间访问权限隔离" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -911,11 +1004,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Keystone</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">Multi-Factor Authentication</a>
+                <a href="javascript:void(0)" class="js-tag color4">Barbican</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -927,6 +1016,18 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Keystone</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">Multi-Factor Authentication</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Snapshot</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Python</a>
               </li>
              
@@ -935,19 +1036,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Barbican</a>
+                <a href="javascript:void(0)" class="js-tag color5">pypi repo</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">Snapshot</a>
+                <a href="javascript:void(0)" class="js-tag color4">gerrit gitweb</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">gerrit</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">pypi repo</a>
               </li>
             
             <div class="clearfix"></div>
