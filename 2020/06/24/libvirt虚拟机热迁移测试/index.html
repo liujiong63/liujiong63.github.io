@@ -6,18 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Jeremy_Liu&#39;s Blog</title>
+  <title>libvirt虚拟机热迁移测试 | Jeremy_Liu&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="测试环境使用物理机搭建的虚拟化系统，创建一台虚拟机，规格为64核心+64G内存+100G硬盘，对该虚拟机进行热迁移测试。 测试工具虚拟机内安装stressapptest工具，用于对虚拟机的CPU和内存进行压力测试。该工具命令行支持的参数有：  -M mbytes：测试内存的大小。 -s seconds：运行时长。 -m threads：运行的线程数量。  auto-converge功能测试测试命令">
+<meta name="keywords" content="libvirt,live-migration">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Jeremy_Liu&#39;s Blog">
+<meta property="og:title" content="libvirt虚拟机热迁移测试">
 <meta property="og:url" content="http://yoursite.com/2020/06/24/libvirt虚拟机热迁移测试/index.html">
 <meta property="og:site_name" content="Jeremy_Liu&#39;s Blog">
 <meta property="og:description" content="测试环境使用物理机搭建的虚拟化系统，创建一台虚拟机，规格为64核心+64G内存+100G硬盘，对该虚拟机进行热迁移测试。 测试工具虚拟机内安装stressapptest工具，用于对虚拟机的CPU和内存进行压力测试。该工具命令行支持的参数有：  -M mbytes：测试内存的大小。 -s seconds：运行时长。 -m threads：运行的线程数量。  auto-converge功能测试测试命令">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2020-06-11T06:14:51.742Z">
+<meta property="og:updated_time" content="2020-06-24T02:37:20.195Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Jeremy_Liu&#39;s Blog">
+<meta name="twitter:title" content="libvirt虚拟机热迁移测试">
 <meta name="twitter:description" content="测试环境使用物理机搭建的虚拟化系统，创建一台虚拟机，规格为64核心+64G内存+100G硬盘，对该虚拟机进行热迁移测试。 测试工具虚拟机内安装stressapptest工具，用于对虚拟机的CPU和内存进行压力测试。该工具命令行支持的参数有：  -M mbytes：测试内存的大小。 -s seconds：运行时长。 -m threads：运行的线程数量。  auto-converge功能测试测试命令">
   
     <link rel="alternative" href="/atom.xml" title="Jeremy_Liu&#39;s Blog" type="application/atom+xml">
@@ -142,6 +143,21 @@
           <div id="js-content" class="content-ll">
             <article id="post-libvirt虚拟机热迁移测试" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      libvirt虚拟机热迁移测试
+    </h1>
+  
+
+        
+        <a href="/2020/06/24/libvirt虚拟机热迁移测试/" class="archive-article-date">
+  	<time datetime="2020-06-23T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-06-24</time>
+</a>
+        
+      </header>
     
     <div class="article-entry" itemprop="articleBody">
       
@@ -396,10 +412,56 @@
       
 
       
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>打赏的都是天使<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/img/zhifubao.jpg">
+                      <span class="reward-type">支付宝</span>
+                    </div>
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/img/weixin.jpg">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
     </div>
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">libvirt</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">live-migration</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -619,6 +681,14 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">pypi repo</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">libvirt</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">live-migration</a>
               </li>
             
             <div class="clearfix"></div>
